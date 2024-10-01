@@ -120,7 +120,10 @@
             <h2 class="text-4xl font-bold text-center mb-16 text-primary-400">Our Features</h2>
             <div class="grid md:grid-cols-2 gap-12">
               <div class="bg-gray-700 p-8 rounded-xl shadow-lg transform hover:scale-105 transition duration-300">
-                <div class="text-primary-400 text-4xl mb-6">🔒</div>
+                <div class="text-primary-400 text-4xl mb-6"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+                  </svg>
+                  </div>
                 <h3 class="text-2xl font-semibold mb-4">Link Scanner</h3>
                 <p class="text-gray-300 mb-6">Protect yourself from malicious websites with our advanced link scanning technology. Stay safe while browsing the web.</p>
                 <ul class="space-y-2 text-gray-300">
@@ -130,7 +133,10 @@
                 </ul>
               </div>
               <div class="bg-gray-700 p-8 rounded-xl shadow-lg transform hover:scale-105 transition duration-300">
-                <div class="text-primary-400 text-4xl mb-6">🖼️</div>
+                <div class="text-primary-400 text-4xl mb-6"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+                  </svg>
+                  </div>
                 <h3 class="text-2xl font-semibold mb-4">Free File Sharing</h3>
                 <p class="text-gray-300 mb-6">Share your photos and files securely with friends, family, or colleagues. Fast, easy, and free!</p>
                 <ul class="space-y-2 text-gray-300">
@@ -147,7 +153,7 @@
           <div class="container mx-auto px-4 text-center">
             <h2 class="text-4xl font-bold mb-6 text-primary-400">Ready to Secure Your Online Experience?</h2>
             <p class="text-xl text-gray-300 mb-10 max-w-2xl mx-auto">Join Cipherguard today and enjoy safe browsing and secure file sharing. Take control of your digital life.</p>
-            <a href="/signup" class="bg-primary-500 text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-primary-600 transition duration-300 inline-block transform hover:scale-105">Sign Up Now</a>
+            <a on:click={openSignupModal} class="bg-primary-500 text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-primary-600 transition duration-300 inline-block transform hover:scale-105">Sign Up Now</a>
           </div>
         </section>
       {/if}
