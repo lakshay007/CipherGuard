@@ -56,30 +56,9 @@
         </NavBrand>
         <NavHamburger on:click={toggle} />
         <NavUl {hidden}>
-            <NavLi href="/">
-                {#if Home}
-                    <Home class="mr-2" />
-                {/if}
-                Home
-            </NavLi>
-            <NavLi href="/share">
-                {#if Share}
-                    <Share class="mr-2" />
-                {/if}
-                Share Files
-            </NavLi>
-            <NavLi href="/" on:click={handleSignOut}>
-                {#if LogOut}
-                    <LogOut class="mr-2" />
-                {/if}
-                Sign Out
-            </NavLi>
-            <NavLi href="/fileshare">
-                {#if Share}
-                    <Share class="mr-2" />
-                {/if}
-                File Share
-            </NavLi>
+            <NavLi href="/dashboard">Dashboard</NavLi>
+            <NavLi href="/fileshare">File Share</NavLi>
+            <NavLi href="/" on:click={handleSignOut}>Sign Out</NavLi>
         </NavUl>
     </Navbar>
 
@@ -96,7 +75,7 @@
                     class="text-lg py-3"
                     size="lg"
                 />
-                <Button type="submit" disabled={isLoading} class="w-full py-3 text-lg" size="lg">
+                <Button type="submit" disabled={isLoading} class="w-full py-3 text-lg btn-primary" size="lg">
                     {#if isLoading}
                         <Spinner size="sm" class="mr-2" />
                         Scanning...
@@ -142,5 +121,20 @@
 <style>
     :global(body) {
         font-family: 'Inter', sans-serif;
+    }
+
+    :global(.btn-primary) {
+        background-color: #10B981;
+        color: white;
+        transition: background-color 0.3s ease;
+    }
+
+    :global(.btn-primary:hover) {
+        background-color: #059669;
+    }
+
+    :global(.btn-primary:disabled) {
+        background-color: #6B7280;
+        cursor: not-allowed;
     }
 </style>
