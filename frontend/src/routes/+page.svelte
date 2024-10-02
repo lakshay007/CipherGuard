@@ -1,18 +1,23 @@
 <script>
     import { onMount } from 'svelte';
     import { fade, fly } from 'svelte/transition';
-    import { Button, Modal, Label, Input } from 'flowbite-svelte';
+    import { Modal, Label, Input } from 'flowbite-svelte';
+    import { Button as FlowbiteButton } from 'flowbite-svelte';
   
     let showContent = false;
     let showLoginModal = false;
-    let showSignupModal = false; // New state for signup modal
+    let showSignupModal = false; 
+    let showForgotPasswordModal = false;
     let loginUsername = '';
     let loginPassword = '';
-    let signupName = ''; // New state for signup name
-    let signupUsername = ''; // New state for signup username
-    let signupEmail = ''; // New state for signup email
-    let signupPassword = ''; // New state for signup password
+    let signupName = ''; 
+    let signupUsername = ''; 
+    let signupEmail = ''; 
+    let signupPassword = ''; 
+    let resetEmail = '';
     let message = '';
+    let resetEmailButtonDisabled = false;
+    let resetEmailCountdown = 0;
   
     onMount(() => {
       showContent = true;
@@ -32,6 +37,54 @@
   
     function closeSignupModal() {
       showSignupModal = false; // Close signup modal
+    }
+  
+    function openForgotPasswordModal() {
+      showLoginModal = false;
+      showForgotPasswordModal = true;
+    }
+  
+    function openSignupFromLogin() {
+      showLoginModal = false;
+      showSignupModal = true;
+    }
+  
+    async function handleForgotPassword() {
+      if (resetEmailButtonDisabled) return;
+  
+      try {
+        resetEmailButtonDisabled = true;
+        resetEmailCountdown = 60;
+  
+        const response = await fetch('http://localhost:4000/api/auth/forgot-password', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email: resetEmail }),
+        });
+  
+        const data = await response.json();
+  
+        if (response.ok) {
+          message = 'Password reset email sent. Please check your inbox.';
+        } else {
+          message = 'Failed to send reset email: ' + data.message;
+        }
+  
+        const countdownInterval = setInterval(() => {
+          resetEmailCountdown--;
+          if (resetEmailCountdown <= 0) {
+            clearInterval(countdownInterval);
+            resetEmailButtonDisabled = false;
+          }
+        }, 1000);
+  
+      } catch (error) {
+        console.error('Error:', error);
+        message = 'An error occurred. Please try again.';
+        resetEmailButtonDisabled = false;
+      }
     }
   
     async function handleLogin(event) {
@@ -92,14 +145,14 @@
           <li><a href="#features" class="text-gray-300 hover:text-primary-400 transition duration-300">Features</a></li>
           <li><a href="#cta" class="text-gray-300 hover:text-primary-400 transition duration-300">Get Started</a></li>
           <li>
-            <Button color="none" class="text-gray-300 hover:text-primary-400 transition duration-300 p-0" on:click={openLoginModal}>
+            <FlowbiteButton color="none" class="text-gray-300 hover:text-primary-400 transition duration-300 p-0" on:click={openLoginModal}>
               Login
-            </Button>
+            </FlowbiteButton>
           </li>
           <li>
-            <Button color="none" class="text-gray-300 hover:text-primary-400 transition duration-300 p-0" on:click={openSignupModal}>
+            <FlowbiteButton color="none" class="text-gray-300 hover:text-primary-400 transition duration-300 p-0" on:click={openSignupModal}>
               Sign Up
-            </Button>
+            </FlowbiteButton>
           </li>
         </ul>
       </nav>
@@ -181,9 +234,12 @@
       <span>Password</span>
       <Input type="password" bind:value={loginPassword} placeholder="•••••••••" required />
     </Label>
-    <Button type="submit" class="w-full">Login to your account</Button>
+    <FlowbiteButton type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white">Login to your account</FlowbiteButton>
     <div class="text-sm font-medium text-gray-500 dark:text-gray-300">
-      Not registered? <a href="/signup" class="text-primary-700 hover:underline dark:text-primary-500">Create account</a>
+      Not registered? <a href="#" on:click={openSignupFromLogin} class="text-primary-700 hover:underline dark:text-primary-500">Create account</a>
+    </div>
+    <div class="text-sm font-medium text-gray-500 dark:text-gray-300">
+      <a href="#" on:click={openForgotPasswordModal} class="text-primary-700 hover:underline dark:text-primary-500">Forgot Password?</a>
     </div>
     {#if message}
       <div class="text-red-500">{message}</div>
@@ -194,14 +250,14 @@
 <!-- Signup Modal -->
 <Modal bind:open={showSignupModal} size="xs">
   <form class="flex flex-col space-y-6" on:submit|preventDefault={handleSignup}>
-    <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">Sign up for CipherGuard</h3>
+    <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">Create an Account</h3>
     <Label class="space-y-2">
       <span>Name</span>
       <Input type="text" bind:value={signupName} placeholder="Enter your name" required />
     </Label>
     <Label class="space-y-2">
       <span>Username</span>
-      <Input type="text" bind:value={signupUsername} placeholder="Enter your username" required />
+      <Input type="text" bind:value={signupUsername} placeholder="Choose a username" required />
     </Label>
     <Label class="space-y-2">
       <span>Email</span>
@@ -211,7 +267,7 @@
       <span>Password</span>
       <Input type="password" bind:value={signupPassword} placeholder="•••••••••" required />
     </Label>
-    <Button type="submit" class="w-full">Create your account</Button>
+    <FlowbiteButton type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white">Create your account</FlowbiteButton>
     <div class="text-sm font-medium text-gray-500 dark:text-gray-300">
       Already have an account? <a href="#" class="text-primary-700 hover:underline dark:text-primary-500" on:click={closeSignupModal}>Login</a>
     </div>
@@ -221,9 +277,45 @@
   </form>
 </Modal>
 
+<!-- Forgot Password Modal -->
+<Modal bind:open={showForgotPasswordModal} size="xs">
+  <form class="flex flex-col space-y-6" on:submit|preventDefault={handleForgotPassword}>
+    <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">Reset Your Password</h3>
+    <Label class="space-y-2">
+      <span>Email</span>
+      <Input type="email" bind:value={resetEmail} placeholder="Enter your email" required />
+    </Label>
+    <FlowbiteButton type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white" disabled={resetEmailButtonDisabled}>
+      {resetEmailButtonDisabled ? `Wait ${resetEmailCountdown}s` : 'Send Reset Link'}
+    </FlowbiteButton>
+    <div class="text-sm font-medium text-gray-500 dark:text-gray-300">
+      Remember your password? <a href="#" class="text-primary-700 hover:underline dark:text-primary-500" on:click={() => { showForgotPasswordModal = false; showLoginModal = true; }}>Back to Login</a>
+    </div>
+    {#if message}
+      <div class="text-green-500">{message}</div>
+    {/if}
+  </form>
+</Modal>
+
   
   <style>
     :global(body) {
       font-family: 'Inter', sans-serif;
+    }
+
+    /* Add these styles for the buttons */
+    :global(.flowbite-button) {
+      background-color: #10B981;
+      color: white;
+      transition: background-color 0.3s ease;
+    }
+
+    :global(.flowbite-button:hover) {
+      background-color: #059669;
+    }
+
+    :global(.flowbite-button:disabled) {
+      background-color: #6B7280;
+      cursor: not-allowed;
     }
   </style>

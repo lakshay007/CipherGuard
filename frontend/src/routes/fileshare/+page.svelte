@@ -132,47 +132,57 @@
         </NavUl>
     </Navbar>
 
-    <main class="container mx-auto px-4 py-8 max-w-5xl">
+    <main class="w-full px-4 py-8">
         <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-8 text-center">File Sharing</h1>
 
-        <Card class="mb-8 p-6">
-            <form on:submit|preventDefault={handleUpload} class="flex flex-col gap-4">
-                <Input type="email" placeholder="Your email" bind:value={email} required />
-                <Input type="text" placeholder="Custom Document ID" bind:value={customDocId} required />
-                <Textarea placeholder="Enter text to share" bind:value={text} rows="4" />
-                <p class="text-center text-gray-500 dark:text-gray-400">OR</p>
-                <div class="flex items-center justify-center w-full">
-                    <input
-                        type="file"
-                        id="file-upload"
-                        class="hidden"
-                        bind:this={fileInputRef}
-                        on:change={handleFileChange}
-                        accept=".pdf,.doc,.docx,.txt"
+        <div class="w-full">
+            <div class="mb-8 p-6 w-full bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 rounded-lg border border-gray-200 dark:border-gray-700 divide-gray-200 dark:divide-gray-700 shadow-md">
+                <form on:submit|preventDefault={handleUpload} class="flex flex-col gap-4 w-full">
+                    <Input type="email" placeholder="Your email" bind:value={email} required class="w-full" />
+                    <Input type="text" placeholder="Custom Document ID" bind:value={customDocId} required class="w-full" />
+                    <Textarea 
+                        placeholder="Enter text to share" 
+                        bind:value={text} 
+                        rows="10" 
+                        class="w-full text-lg"
                     />
-                    <Button type="button" on:click={openFileDialog} class="w-full py-3 text-lg bg-blue-600 hover:bg-blue-700 text-white" size="lg">
-                        {file ? file.name : 'Choose File'}
-                    </Button>
-                </div>
-                <Button type="submit" class="w-full py-3 text-lg bg-green-600 hover:bg-green-700 text-white" size="lg">Upload</Button>
-            </form>
-        </Card>
+                    <p class="text-center text-gray-500 dark:text-gray-400">OR</p>
+                    <div class="flex items-center justify-center w-full">
+                        <input
+                            type="file"
+                            id="file-upload"
+                            class="hidden"
+                            bind:this={fileInputRef}
+                            on:change={handleFileChange}
+                            accept=".pdf,.doc,.docx,.txt"
+                        />
+                        <Button type="button" on:click={openFileDialog} class="w-full py-3 text-lg bg-blue-600 hover:bg-blue-700 text-white" size="lg">
+                            {file ? file.name : 'Choose File'}
+                        </Button>
+                    </div>
+                    <Button type="submit" class="w-full py-3 text-lg bg-green-600 hover:bg-green-700 text-white" size="lg">Upload</Button>
+                </form>
+            </div>
 
-        {#if uploadStatus}
-            <p class="text-center text-lg {uploadStatus.includes('successful') ? 'text-green-600' : 'text-red-600'}">
-                {uploadStatus}
-            </p>
-            {#if uploadedLink}
-                <p class="text-center mt-4">
-                    Your document is now available at: <a href={uploadedLink} class="text-blue-600 hover:underline">{uploadedLink}</a>
+            {#if uploadStatus}
+                <p class="text-center text-lg {uploadStatus.includes('successful') ? 'text-green-600' : 'text-red-600'}">
+                    {uploadStatus}
                 </p>
+                {#if uploadedLink}
+                    <p class="text-center mt-4">
+                        Your document is now available at: <a href={uploadedLink} class="text-blue-600 hover:underline">{uploadedLink}</a>
+                    </p>
+                {/if}
             {/if}
-        {/if}
+        </div>
     </main>
 </div>
 
 <style>
     :global(body) {
         font-family: 'Inter', sans-serif;
+    }
+    :global(.full-width-card) {
+        max-width: 100% !important;
     }
 </style>

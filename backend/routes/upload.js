@@ -42,12 +42,13 @@ router.post('/', upload.single('file'), async (req, res) => {
             return res.status(400).json({ message: 'This document ID is already in use' });
         }
 
+
         if (req.body.text) {
             // Handle text upload
             doc = new Doc({
                 customDocId: req.body.customDocId,
                 email: req.body.email,
-                content: req.body.text,
+                content: req.body.text, // Store text as-is, without encoding
                 filename: 'text_' + Date.now() + '.txt',
                 contentType: 'text/plain',
             });
@@ -56,7 +57,7 @@ router.post('/', upload.single('file'), async (req, res) => {
             doc = new Doc({
                 customDocId: req.body.customDocId,
                 email: req.body.email,
-                content: req.file.buffer.toString('base64'),
+                content: req.file.buffer.toString('base64'), // Keep file content encoded
                 filename: req.file.originalname,
                 contentType: req.file.mimetype,
             });
@@ -72,7 +73,7 @@ router.post('/', upload.single('file'), async (req, res) => {
     }
 });
 
-// Add a new route to retrieve a document by its custom ID
+
 router.get('/:customDocId', async (req, res) => {
     try {
         const doc = await Doc.findOne({ customDocId: req.params.customDocId });
@@ -82,7 +83,7 @@ router.get('/:customDocId', async (req, res) => {
         res.json({
             id: doc.customDocId,
             email: doc.email,
-            content: doc.content,
+            content: doc.contentType === 'text/plain' ? doc.content : doc.content, // Don't encode text content
             filename: doc.filename,
             contentType: doc.contentType,
             uploadDate: doc.uploadDate
