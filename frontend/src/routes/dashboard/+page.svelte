@@ -65,26 +65,28 @@
     <main class="container mx-auto px-4 py-8 max-w-5xl">
         <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-8 text-center">Link Scanner Dashboard</h1>
 
-        <Card class="mb-8 p-6">
-            <form on:submit|preventDefault={handleSearch} class="flex flex-col gap-4">
-                <Input
-                    type="url"
-                    placeholder="Paste a link to scan"
-                    required
-                    bind:value={searchUrl}
-                    class="text-lg py-3"
-                    size="lg"
-                />
-                <Button type="submit" disabled={isLoading} class="w-full py-3 text-lg btn-primary" size="lg">
-                    {#if isLoading}
-                        <Spinner size="sm" class="mr-2" />
-                        Scanning...
-                    {:else}
-                        Scan Link
-                    {/if}
-                </Button>
-            </form>
-        </Card>
+        <div class="flex justify-center">
+            <Card class="mb-8 p-6 w-full max-w-4xl">
+                <form on:submit|preventDefault={handleSearch} class="flex flex-col gap-4">
+                    <Input
+                        type="url"
+                        placeholder="Paste a link to scan"
+                        required
+                        bind:value={searchUrl}
+                        class="text-lg py-3"
+                        size="lg"
+                    />
+                    <Button type="submit" disabled={isLoading} class="w-full py-3 text-lg btn-primary" size="lg">
+                        {#if isLoading}
+                            <Spinner size="sm" class="mr-2" />
+                            Scanning...
+                        {:else}
+                            Scan Link
+                        {/if}
+                    </Button>
+                </form>
+            </Card>
+        </div>
 
         {#if searchResult}
             <Card class="overflow-hidden">
