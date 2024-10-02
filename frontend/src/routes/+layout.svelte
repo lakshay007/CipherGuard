@@ -1,5 +1,6 @@
 <script>
     import "../app.css";
-  </script>
-  
-  <slot />
+    import "flowbite/dist/flowbite.css";
+</script>
+
+<slot />
