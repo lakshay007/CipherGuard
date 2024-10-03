@@ -46,6 +46,16 @@
         const files = event.target.files;
         if (files.length > 0) {
             file = files[0];
+            text = ''; // Clear text when a file is selected
+        } else {
+            file = null;
+        }
+    }
+
+    function clearFile() {
+        file = null;
+        if (fileInputRef) {
+            fileInputRef.value = '';
         }
     }
 
@@ -148,6 +158,7 @@
                         bind:value={text} 
                         rows="10" 
                         class="w-full text-lg"
+                        disabled={file !== null}
                     />
                     <p class="text-center text-gray-500 dark:text-gray-400">OR</p>
                     <div class="flex items-center justify-center w-full">
@@ -162,6 +173,11 @@
                         <Button type="button" on:click={openFileDialog} class="w-full py-3 text-lg bg-blue-600 hover:bg-blue-700 text-white" size="lg">
                             {file ? file.name : 'Choose File'}
                         </Button>
+                        {#if file}
+                            <Button type="button" on:click={clearFile} class="ml-2 py-3 text-lg bg-red-600 hover:bg-red-700 text-white" size="lg">
+                                Clear
+                            </Button>
+                        {/if}
                     </div>
                     <Button type="submit" class="w-full py-3 text-lg bg-green-600 hover:bg-green-700 text-white" size="lg">Upload</Button>
                 </form>
