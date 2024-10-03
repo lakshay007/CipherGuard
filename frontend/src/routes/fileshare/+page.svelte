@@ -56,8 +56,11 @@
         }
 
         const formData = new FormData();
-        formData.append('email', email);
         formData.append('customDocId', customDocId);
+
+        if (email) {
+            formData.append('email', email);
+        }
 
         if (text) {
             formData.append('text', text);
@@ -91,6 +94,7 @@
                 text = '';
                 file = null;
                 customDocId = '';
+                email = ''; // Clear email field after successful upload
                 if (fileInputRef) {
                     fileInputRef.value = '';
                 }
@@ -132,13 +136,13 @@
     </Navbar>
 
     <main class="w-full px-4 py-8">
-        <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-8 text-center">File Sharing</h1>
+        <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-8 text-center">Upload or paste your content</h1>
 
         <div class="flex justify-center">
             <div class="bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 rounded-lg border border-gray-200 dark:border-gray-700 divide-gray-200 dark:divide-gray-700 shadow-md flex w-full max-w-4xl flex-col sm:p-6 mb-8 p-6">
                 <form on:submit|preventDefault={handleUpload} class="flex flex-col gap-4 w-full">
-                    <Input type="email" placeholder="Your email(optional)" bind:value={email} required class="w-full" />
-                    <Input type="text" placeholder="Custom Document ID" bind:value={customDocId} required class="w-full" />
+                    <Input type="email" placeholder="Your email (optional)" bind:value={email} class="w-full" />
+                    <Input type="text" placeholder="Custom Document link name" bind:value={customDocId} required class="w-full" />
                     <Textarea 
                         placeholder="Enter text to share" 
                         bind:value={text} 

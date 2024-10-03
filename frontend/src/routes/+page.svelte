@@ -1,7 +1,7 @@
 <script>
     import { onMount } from 'svelte';
     import { fade, fly } from 'svelte/transition';
-    import { Modal, Label, Input } from 'flowbite-svelte';
+    import { Modal, Label, Input, Navbar, NavBrand, NavHamburger, NavUl, NavLi } from 'flowbite-svelte';
     import { Button as FlowbiteButton } from 'flowbite-svelte';
     import { goto } from '$app/navigation';
   
@@ -21,6 +21,8 @@
     let message = '';
     let resetEmailButtonDisabled = false;
     let resetEmailCountdown = 0;
+  
+    let hidden = true;
   
     onMount(() => {
       showContent = true;
@@ -145,6 +147,10 @@
     function goToFileShare() {
         goto('/fileshare');
     }
+  
+    function toggleMenu() {
+      hidden = !hidden;
+    }
   </script>
 
   
@@ -154,25 +160,20 @@
   </svelte:head>
   
   <div class="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-white font-inter">
-    <header class="bg-gray-800 bg-opacity-50 backdrop-filter backdrop-blur-lg fixed w-full z-10">
-      <nav class="container mx-auto px-4 py-4 flex justify-between items-center">
-        <div class="text-2xl font-bold text-primary-400">Cipherguard</div>
-        <ul class="flex space-x-6 items-center">
-          <li><a href="#features" class="text-gray-300 hover:text-primary-400 transition duration-300">Features</a></li>
-          <li><a href="#cta" class="text-gray-300 hover:text-primary-400 transition duration-300">Get Started</a></li>
-          <li>
-            <FlowbiteButton color="none" class="text-gray-300 hover:text-primary-400 transition duration-300 p-0" on:click={openLoginModal}>
-              Login
-            </FlowbiteButton>
-          </li>
-          <li>
-            <FlowbiteButton color="none" class="text-gray-300 hover:text-primary-400 transition duration-300 p-0" on:click={openSignupModal}>
-              Sign Up
-            </FlowbiteButton>
-          </li>
-        </ul>
-      </nav>
-    </header>
+    <Navbar let:hidden let:toggle color="none" class="px-4 lg:px-6 py-2.5">
+      <NavBrand href="/">
+        <img src="/images/cipherguard-logo.svg" class="mr-3 h-6 sm:h-9" alt="Cipherguard Logo" />
+        <span class="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
+          Cipherguard
+        </span>
+      </NavBrand>
+      <NavHamburger on:click={toggle} />
+      <NavUl {hidden} class="order-1 md:order-none">
+        <NavLi href="#features">Features</NavLi>
+        <NavLi on:click={goToFileShare} >Get Started</NavLi>
+        <NavLi href="/" on:click={openLoginModal}>Login</NavLi>
+      </NavUl>
+    </Navbar>
   
     <main>
       {#if showContent}
@@ -333,5 +334,18 @@
     :global(.flowbite-button:disabled) {
       background-color: #6B7280;
       cursor: not-allowed;
+    }
+
+    /* Add these styles for better mobile responsiveness */
+    :global(.navbar-menu) {
+      @apply md:flex md:w-auto md:order-1;
+    }
+
+    :global(.navbar-menu ul) {
+      @apply flex flex-col mt-4 md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium;
+    }
+
+    :global(.navbar-menu li) {
+      @apply block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700;
     }
   </style>
