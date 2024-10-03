@@ -4,7 +4,6 @@
     import { Modal, Label, Input, Navbar, NavBrand, NavHamburger, NavUl, NavLi } from 'flowbite-svelte';
     import { Button as FlowbiteButton } from 'flowbite-svelte';
     import { goto } from '$app/navigation';
-    import { page } from '$app/stores';
   
     const API_URL = import.meta.env.VITE_API_URL;
   
@@ -26,14 +25,8 @@
     let hidden = true;
   
     onMount(() => {
-        // Check if there's a 'signin' query parameter
-        const urlParams = new URLSearchParams(window.location.search);
-        const signinParam = urlParams.get('signin');
-  
-        // Only redirect if there's no 'signin' parameter
-        if (!signinParam) {
-            goto('/fileshare');
-        }
+      showContent = true;
+      window.location.href = '/fileshare';
     });
   
     function openLoginModal() {
