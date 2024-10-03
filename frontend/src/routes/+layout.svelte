@@ -1,6 +1,11 @@
 <script>
+    import { onMount } from 'svelte';
+    import { setupKeepAlive } from '$lib/keepAlive';
     import "../app.css";
-    import "flowbite/dist/flowbite.css";
+
+    onMount(() => {
+        setupKeepAlive();
+    });
 </script>
 
 <slot />

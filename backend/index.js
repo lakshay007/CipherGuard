@@ -31,20 +31,27 @@ app.listen(PORT, () => {
 });
 
 const url = `https://cipherguard.onrender.com/`;
-const interval = 300000; // Interval in milliseconds 
+const interval = 300000; // Interval in milliseconds
 
-function reloadWebsite() {
-  axios.get(url)
-    .then(response => {
-      console.log(`Reloaded at ${new Date().toISOString()}: Status Code ${response.status}`);
-    })
-    .catch(error => {
-      console.error(`Error reloading at ${new Date().toISOString()}:`, error.message);
-    });
+// Add this new route
+app.get('/keep-alive', (req, res) => {
+    res.status(200).send('Server is alive');
+});
+
+// Add this at the end of your file
+const keepAliveInterval = 14 * 60 * 1000; // 14 minutes
+
+function keepAlive() {
+    fetch(url + 'keep-alive')
+        .then(response => console.log('Keep-alive response:', response.status))
+        .catch(error => console.error('Keep-alive error:', error));
 }
 
+setInterval(keepAlive, keepAliveInterval);
 
-setInterval(reloadWebsite, interval);
+
+
+
 
 
 
