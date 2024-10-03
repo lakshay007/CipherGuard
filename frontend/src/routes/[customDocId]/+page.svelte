@@ -1,13 +1,17 @@
 <script>
     import { onMount } from 'svelte';
     import { page } from '$app/stores';
-    import { Button, Card } from 'flowbite-svelte';
+    import { Button, Card, Navbar, NavBrand, NavLi, NavUl, NavHamburger } from 'flowbite-svelte';
     import { ClipboardSolid } from 'flowbite-svelte-icons';
+    import { isUserSignedIn, signOut } from '$lib/auth';
+    import { goto } from '$app/navigation';
 
     let docData = null;
     let error = null;
+    let isSignedIn = false;
 
     onMount(async () => {
+        isSignedIn = isUserSignedIn();
         try {
             const response = await fetch(`http://localhost:4000/api/upload/${$page.params.customDocId}`);
             if (response.ok) {
@@ -46,10 +50,32 @@
                 .catch(err => console.error('Failed to copy: ', err));
         }
     }
+
+    function handleSignOut() {
+        signOut();
+        goto('/'); // Redirect to home page after signing out
+    }
 </script>
 
-<div class="min-h-screen bg-gray-100 dark:bg-gray-900 py-8 w-full">
-    <main class="container mx-auto px-4 w-full max-w-none">
+<div class="min-h-screen bg-gray-100 dark:bg-gray-900">
+    <Navbar let:hidden let:toggle rounded color="primary">
+        <NavBrand href="/">
+            <img src="/images/cipherguard-logo.svg" class="mr-3 h-6 sm:h-9" alt="Cipherguard Logo" />
+            <span class="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
+                Cipherguard
+            </span>
+        </NavBrand>
+        <NavHamburger on:click={toggle} />
+        <NavUl {hidden}>
+            <NavLi href="/fileshare">File Share</NavLi>
+            <NavLi href="/urlscanner">URL Scanner</NavLi>
+            {#if isSignedIn}
+                <NavLi href="/" on:click={handleSignOut}>Sign Out</NavLi>
+            {/if}
+        </NavUl>
+    </Navbar>
+
+    <main class="container mx-auto px-4 py-8">
         <Card class="mb-8 p-6 w-full max-w-none" padding="none"> <!-- Added max-w-none and padding="none" -->
             <div class="p-6 w-full"> <!-- Added a wrapper div with padding -->
                 {#if error}

@@ -2,11 +2,18 @@
     import { onMount } from 'svelte';
     import { Navbar, NavBrand, NavLi, NavUl, NavHamburger, Button, Input, Textarea, Card } from 'flowbite-svelte';
     import { browser } from '$app/environment';
+    import { isUserSignedIn, signOut } from '$lib/auth';
+    import { goto } from '$app/navigation';
 
     let Home;
     let Share;
     let LogOut;
     let FileInput;
+    let isSignedIn = false;
+
+    onMount(async () => {
+        isSignedIn = await isUserSignedIn();
+    });
 
     if (browser) {
         import('svelte-bootstrap-icons').then(module => {
@@ -95,9 +102,10 @@
         }
     }
 
-    function handleSignOut() {
-        // Implement sign out logic here
-        console.log('Signing out...');
+    async function handleSignOut() {
+        signOut();
+        isSignedIn = false;
+        goto('/'); // Redirect to home page after signing out
     }
 </script>
 
@@ -111,24 +119,13 @@
         </NavBrand>
         <NavHamburger on:click={toggle} />
         <NavUl {hidden}>
-            <NavLi href="/dashboard">
-                {#if Home}
-                    <Home class="mr-2" />
-                {/if}
-                Dashboard
-            </NavLi>
-            <NavLi href="/fileshare">
-                {#if Share}
-                    <Share class="mr-2" />
-                {/if}
-                File Share
-            </NavLi>
-            <NavLi href="/" on:click={handleSignOut}>
-                {#if LogOut}
-                    <LogOut class="mr-2" />
-                {/if}
-                Sign Out
-            </NavLi>
+            <NavLi href="/fileshare">File Share</NavLi>
+            <NavLi href="/urlscanner">URL Scanner</NavLi>
+            {#if isSignedIn}
+                <NavLi href="/" on:click={handleSignOut}>Sign Out</NavLi>
+            {:else}
+                <NavLi href="/">Sign In</NavLi>
+            {/if}
         </NavUl>
     </Navbar>
 

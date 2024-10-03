@@ -3,6 +3,7 @@
     import { fade, fly } from 'svelte/transition';
     import { Modal, Label, Input } from 'flowbite-svelte';
     import { Button as FlowbiteButton } from 'flowbite-svelte';
+    import { goto } from '$app/navigation';
   
     let showContent = false;
     let showLoginModal = false;
@@ -87,47 +88,60 @@
       }
     }
   
-    async function handleLogin(event) {
-      event.preventDefault();
-      const response = await fetch('http://localhost:4000/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username: loginUsername, password: loginPassword }),
-      });
+    async function handleLogin() {
+      try {
+        const response = await fetch('http://localhost:4000/api/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ username: loginUsername, password: loginPassword }),
+        });
   
-      const data = await response.json();
-      if (response.ok) {
-        message = 'Login successful! Token: ' + data.token;
-      
-         localStorage.setItem('token', data.token);
-        closeLoginModal();
-        window.location.href = '/dashboard';
-      } else {
-        message = 'Login failed: ' + data.message;
+        const data = await response.json();
+  
+        if (response.ok) {
+          // Store the token in localStorage
+          localStorage.setItem('token', data.token);
+          // Redirect to file share page
+          goto('/fileshare');
+        } else {
+          message = data.message || 'Login failed';
+        }
+      } catch (error) {
+        console.error('Login error:', error);
+        message = 'An error occurred during login';
       }
     }
   
-    async function handleSignup(event) {
-      event.preventDefault();
-      const response = await fetch('http://localhost:4000/api/auth/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ name: signupName, username: signupUsername, email: signupEmail, password: signupPassword }),
-      });
+    async function handleSignup() {
+      try {
+        const response = await fetch('http://localhost:4000/api/auth/signup', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ name: signupName, username: signupUsername, email: signupEmail, password: signupPassword }),
+        });
   
-      const data = await response.json();
-      if (response.ok) {
-        message = 'Signup successful! Token: ' + data.token;
-        localStorage.setItem('token', data.token);
-        closeSignupModal();
-        window.location.href = '/dashboard';
-      } else {
-        message = 'Signup failed: ' + data.message;
+        const data = await response.json();
+  
+        if (response.ok) {
+          // Store the token in localStorage
+          localStorage.setItem('token', data.token);
+          // Redirect to file share page
+          goto('/fileshare');
+        } else {
+          message = data.message || 'Signup failed';
+        }
+      } catch (error) {
+        console.error('Signup error:', error);
+        message = 'An error occurred during signup';
       }
+    }
+  
+    function goToFileShare() {
+        goto('/fileshare');
     }
   </script>
 
@@ -164,7 +178,7 @@
           <div class="container mx-auto px-4 text-center">
             <h1 class="text-5xl md:text-6xl font-bold mb-6 leading-tight">Secure Your Online Experience with Cipherguard</h1>
             <p class="text-xl mb-10 text-gray-300 max-w-2xl mx-auto">Scan links for malicious content and share files securely - all in one place. Experience the future of online safety.</p>
-            <a href="#cta" class="bg-primary-500 text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-primary-600 transition duration-300 inline-block transform hover:scale-105">Get Started</a>
+            <button on:click={goToFileShare} class="bg-primary-500 text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-primary-600 transition duration-300 inline-block transform hover:scale-105">Get Started</button>
           </div>
         </section>
   
@@ -206,7 +220,7 @@
           <div class="container mx-auto px-4 text-center">
             <h2 class="text-4xl font-bold mb-6 text-primary-400">Ready to Secure Your Online Experience?</h2>
             <p class="text-xl text-gray-300 mb-10 max-w-2xl mx-auto">Join Cipherguard today and enjoy safe browsing and secure file sharing. Take control of your digital life.</p>
-            <a on:click={openSignupModal} class="bg-primary-500 text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-primary-600 transition duration-300 inline-block transform hover:scale-105">Sign Up Now</a>
+            <button on:click={goToFileShare} class="bg-primary-500 text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-primary-600 transition duration-300 inline-block transform hover:scale-105">Get Started Now</button>
           </div>
         </section>
       {/if}

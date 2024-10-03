@@ -9,7 +9,7 @@ const router = express.Router();
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-// Update the schema to include the custom document ID
+
 const DocSchema = new mongoose.Schema({
     customDocId: { type: String, unique: true, required: true },
     email: String,

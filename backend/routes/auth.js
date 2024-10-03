@@ -135,4 +135,19 @@ router.post('/reset-password/:token', async (req, res) => {
     }
 });
 
+router.get('/verify', (req, res) => {
+    const token = req.header('Authorization')?.split(' ')[1];
+
+    if (!token) {
+        return res.status(401).json({ message: 'No token, authorization denied' });
+    }
+
+    try {
+        jwt.verify(token, process.env.JWT_SECRET);
+        res.json({ valid: true });
+    } catch (err) {
+        res.status(401).json({ message: 'Token is not valid' });
+    }
+});
+
 module.exports = router;
