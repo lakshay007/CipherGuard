@@ -5,6 +5,8 @@
     import { Button as FlowbiteButton } from 'flowbite-svelte';
     import { goto } from '$app/navigation';
   
+    const API_URL = import.meta.env.VITE_API_URL;
+  
     let showContent = false;
     let showLoginModal = false;
     let showSignupModal = false; 
@@ -57,7 +59,7 @@
         resetEmailButtonDisabled = true;
         resetEmailCountdown = 60;
   
-        const response = await fetch('http://localhost:4000/api/auth/forgot-password', {
+        const response = await fetch(`${API_URL}/api/auth/forgot-password`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -90,7 +92,7 @@
   
     async function handleLogin() {
       try {
-        const response = await fetch('http://localhost:4000/api/auth/login', {
+        const response = await fetch(`${API_URL}/api/auth/login`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -116,7 +118,7 @@
   
     async function handleSignup() {
       try {
-        const response = await fetch('http://localhost:4000/api/auth/signup', {
+        const response = await fetch(`${API_URL}/api/auth/signup`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

@@ -2,6 +2,8 @@
     import { page } from '$app/stores';
     import { Button, Input, Label } from 'flowbite-svelte';
 
+    const API_URL = import.meta.env.VITE_API_URL;
+
     let newPassword = '';
     let confirmPassword = '';
     let message = '';
@@ -13,7 +15,7 @@
         }
 
         try {
-            const response = await fetch(`http://localhost:4000/api/auth/reset-password/${$page.params.token}`, {
+            const response = await fetch(`${API_URL}/api/auth/reset-password/${$page.params.token}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

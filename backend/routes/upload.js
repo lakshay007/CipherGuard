@@ -42,22 +42,26 @@ router.post('/', upload.single('file'), async (req, res) => {
             return res.status(400).json({ message: 'This document ID is already in use' });
         }
 
+        // Create a base document object
+        const docData = {
+            customDocId: req.body.customDocId,
+            // Only include email if it's provided
+            ...(req.body.email && { email: req.body.email }),
+        };
 
         if (req.body.text) {
             // Handle text upload
             doc = new Doc({
-                customDocId: req.body.customDocId,
-                email: req.body.email,
-                content: req.body.text, // Store text as-is, without encoding
+                ...docData,
+                content: req.body.text,
                 filename: 'text_' + Date.now() + '.txt',
                 contentType: 'text/plain',
             });
         } else if (req.file) {
             // Handle file upload
             doc = new Doc({
-                customDocId: req.body.customDocId,
-                email: req.body.email,
-                content: req.file.buffer.toString('base64'), // Keep file content encoded
+                ...docData,
+                content: req.file.buffer.toString('base64'),
                 filename: req.file.originalname,
                 contentType: req.file.mimetype,
             });

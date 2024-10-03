@@ -5,6 +5,8 @@
     import { isUserSignedIn, signOut } from '$lib/auth';
     import { goto } from '$app/navigation';
 
+    const API_URL = import.meta.env.VITE_API_URL;
+
     let Home;
     let Share;
     let LogOut;
@@ -68,7 +70,7 @@
 
         try {
             // First, check if the custom ID is unique
-            const checkResponse = await fetch(`http://localhost:4000/api/upload/check-id/${customDocId}`);
+            const checkResponse = await fetch(`${API_URL}/api/upload/check-id/${customDocId}`);
             const checkResult = await checkResponse.json();
 
             if (!checkResult.isUnique) {
@@ -77,7 +79,7 @@
             }
 
             // If the ID is unique, proceed with the upload
-            const response = await fetch('http://localhost:4000/api/upload', {
+            const response = await fetch(`${API_URL}/api/upload`, {
                 method: 'POST',
                 body: formData,
             });
@@ -135,7 +137,7 @@
         <div class="flex justify-center">
             <div class="bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 rounded-lg border border-gray-200 dark:border-gray-700 divide-gray-200 dark:divide-gray-700 shadow-md flex w-full max-w-4xl flex-col sm:p-6 mb-8 p-6">
                 <form on:submit|preventDefault={handleUpload} class="flex flex-col gap-4 w-full">
-                    <Input type="email" placeholder="Your email" bind:value={email} required class="w-full" />
+                    <Input type="email" placeholder="Your email(optional)" bind:value={email} required class="w-full" />
                     <Input type="text" placeholder="Custom Document ID" bind:value={customDocId} required class="w-full" />
                     <Textarea 
                         placeholder="Enter text to share" 

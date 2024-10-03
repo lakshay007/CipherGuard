@@ -1,3 +1,5 @@
+const API_URL = import.meta.env.VITE_API_URL;
+
 export function isTokenPresent() {
     return !!localStorage.getItem('token');
 }
@@ -6,7 +8,7 @@ export async function isUserSignedIn() {
     if (!isTokenPresent()) return false;
 
     try {
-        const response = await fetch('http://localhost:4000/api/auth/verify', {
+        const response = await fetch(`${API_URL}/api/auth/verify`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`

@@ -6,6 +6,8 @@
     import { isUserSignedIn, signOut } from '$lib/auth';
     import { goto } from '$app/navigation';
 
+    const API_URL = import.meta.env.VITE_API_URL;
+
     let docData = null;
     let error = null;
     let isSignedIn = false;
@@ -13,7 +15,7 @@
     onMount(async () => {
         isSignedIn = isUserSignedIn();
         try {
-            const response = await fetch(`http://localhost:4000/api/upload/${$page.params.customDocId}`);
+            const response = await fetch(`${API_URL}/api/upload/${$page.params.customDocId}`);
             if (response.ok) {
                 docData = await response.json();
             } else {
