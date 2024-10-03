@@ -144,7 +144,7 @@
                     <Input type="email" placeholder="Your email (optional)" bind:value={email} class="w-full" />
                     <Input type="text" placeholder="Custom Document link name" bind:value={customDocId} required class="w-full" />
                     <Textarea 
-                        placeholder="Enter text to share" 
+                        placeholder="paste your content here" 
                         bind:value={text} 
                         rows="10" 
                         class="w-full text-lg"
