@@ -90,7 +90,7 @@
             if (response.ok) {
                 const result = await response.json();
                 uploadStatus = `Upload successful! Document ID: ${result.id}`;
-                uploadedLink = `http://localhost:5173/${result.id}`; // Update this when you deploy
+                uploadedLink = `https://pasteitt.vercel.app/${result.id}`; 
                 text = '';
                 file = null;
                 customDocId = '';
