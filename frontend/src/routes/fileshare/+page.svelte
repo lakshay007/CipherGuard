@@ -123,6 +123,10 @@
         isSignedIn = false;
         goto('/'); // Redirect to home page after signing out
     }
+
+    function handleSignIn() {
+        goto('/?signin=true');
+    }
 </script>
 
 <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
@@ -140,7 +144,7 @@
             {#if isSignedIn}
                 <NavLi href="/" on:click={handleSignOut}>Sign Out</NavLi>
             {:else}
-                <NavLi href="/">Sign In</NavLi>
+                <NavLi href="/" on:click={handleSignIn}>Sign In</NavLi>
             {/if}
         </NavUl>
     </Navbar>
