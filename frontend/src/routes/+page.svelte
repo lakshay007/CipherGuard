@@ -26,6 +26,7 @@
   
     onMount(() => {
       showContent = true;
+      window.location.href = '/fileshare';
     });
   
     function openLoginModal() {
