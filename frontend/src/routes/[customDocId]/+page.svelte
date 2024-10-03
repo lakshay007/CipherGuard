@@ -31,7 +31,13 @@
         if (docData) {
             let content = docData.content;
             if (docData.contentType !== 'text/plain') {
-                content = atob(docData.content); // Decode base64 only for non-text files
+                // For non-text files, convert base64 to Uint8Array
+                const binaryString = atob(docData.content);
+                const bytes = new Uint8Array(binaryString.length);
+                for (let i = 0; i < binaryString.length; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
+                }
+                content = bytes;
             }
             const blob = new Blob([content], { type: docData.contentType });
             const url = URL.createObjectURL(blob);

@@ -61,7 +61,7 @@ router.post('/', upload.single('file'), async (req, res) => {
             // Handle file upload
             doc = new Doc({
                 ...docData,
-                content: req.file.buffer.toString('base64'),
+                content: req.file.buffer.toString('base64'), // Store as base64
                 filename: req.file.originalname,
                 contentType: req.file.mimetype,
             });
@@ -84,14 +84,28 @@ router.get('/:customDocId', async (req, res) => {
         if (!doc) {
             return res.status(404).json({ message: 'Document not found' });
         }
-        res.json({
-            id: doc.customDocId,
-            email: doc.email,
-            content: doc.contentType === 'text/plain' ? doc.content : doc.content, // Don't encode text content
-            filename: doc.filename,
-            contentType: doc.contentType,
-            uploadDate: doc.uploadDate
-        });
+        
+        if (doc.contentType === 'text/plain') {
+            // For text files, send the content as is
+            res.json({
+                id: doc.customDocId,
+                email: doc.email,
+                content: doc.content,
+                filename: doc.filename,
+                contentType: doc.contentType,
+                uploadDate: doc.uploadDate
+            });
+        } else {
+            // For binary files, send the content as base64
+            res.json({
+                id: doc.customDocId,
+                email: doc.email,
+                content: doc.content, // This is already base64
+                filename: doc.filename,
+                contentType: doc.contentType,
+                uploadDate: doc.uploadDate
+            });
+        }
     } catch (error) {
         console.error('Error retrieving document:', error);
         res.status(500).json({ message: 'Error retrieving document' });
