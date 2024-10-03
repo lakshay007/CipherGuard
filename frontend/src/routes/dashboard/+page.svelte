@@ -41,7 +41,7 @@
     }
 
     function handleSignOut() {
-        // Implement sign out logic here
+       
         console.log('Signing out...');
     }
 </script>
