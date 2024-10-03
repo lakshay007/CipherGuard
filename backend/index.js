@@ -31,7 +31,7 @@ app.listen(PORT, () => {
 });
 
 const url = `https://cipherguard.onrender.com/`;
-const interval = 840000; // Interval in milliseconds (14 mins)
+const interval = 300000; // Interval in milliseconds 
 
 function reloadWebsite() {
   axios.get(url)
