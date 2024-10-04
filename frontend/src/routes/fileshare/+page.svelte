@@ -388,7 +388,6 @@
               rows="10" 
               class="w-full text-lg resize-none"
               disabled={file !== null}
-              // style="font-size: {formattedText.fontSize}; color: {formattedText.color}; font-weight: {formattedText.fontWeight};"
           />
           <div class="flex items-center">
             <div class="flex-grow border-t border-gray-300 dark:border-gray-600"></div>
