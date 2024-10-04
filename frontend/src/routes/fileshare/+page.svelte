@@ -276,62 +276,69 @@
 
 <div class="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-200">
     <nav class="bg-white dark:bg-gray-800 shadow-md">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between h-16">
-          <div class="flex items-center">
-            <a href="/" class="flex-shrink-0">
-              <img src="/images/cipherguard-logo.svg" class="h-8 w-auto" alt="Cipherguard Logo" />
-            </a>
-            <div class="hidden md:block">
-              <div class="ml-10 flex items-baseline space-x-4">
-                <a href="/fileshare" class="text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium">File Share</a>
-                <a href="/urlscanner" class="text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium">URL Scanner</a>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="flex items-center justify-between h-16">
+            <div class="flex items-center">
+              <a href="/" class="flex-shrink-0">
+                <img src="/images/cipherguard-logo.svg" class="h-8 w-auto" alt="Cipherguard Logo" />
+              </a>
+              <div class="hidden md:block">
+                <div class="ml-10 flex items-baseline space-x-4">
+                  <a href="/fileshare" class="text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium">File Share</a>
+                  <a href="/urlscanner" class="text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium">URL Scanner</a>
+                </div>
               </div>
             </div>
-          </div>
-          <div class="hidden md:block">
-            <div class="ml-4 flex items-center md:ml-6">
-              <button on:click={toggleDarkMode} class="p-1 rounded-full text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
+            <div class="hidden md:block">
+              <div class="ml-4 flex items-center md:ml-6">
+                <button on:click={toggleDarkMode} class="p-1 rounded-full text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
+                  {#if isDarkMode}
+                    <Sun size={20} />
+                  {:else}
+                    <Moon size={20} />
+                  {/if}
+                </button>
+                {#if isSignedIn}
+                  <button on:click={handleSignOut} class="ml-3 px-3 py-2 rounded-md text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700">Sign Out</button>
+                {:else}
+                  <button on:click={openLoginModal} class="ml-3 px-3 py-2 rounded-md text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700">Sign In</button>
+                  <button on:click={openSignupModal} class="ml-3 px-3 py-2 rounded-md text-sm font-medium bg-blue-600 text-white hover:bg-blue-700">Sign Up</button>
+                {/if}
+              </div>
+            </div>
+            <div class="flex md:hidden">
+              <button on:click={toggleDarkMode} class="p-1 mr-2 rounded-full text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
                 {#if isDarkMode}
                   <Sun size={20} />
                 {:else}
                   <Moon size={20} />
                 {/if}
               </button>
-              {#if isSignedIn}
-                <button on:click={handleSignOut} class="ml-3 px-3 py-2 rounded-md text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700">Sign Out</button>
-              {:else}
-                <button on:click={openLoginModal} class="ml-3 px-3 py-2 rounded-md text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700">Sign In</button>
-                <button on:click={openSignupModal} class="ml-3 px-3 py-2 rounded-md text-sm font-medium bg-blue-600 text-white hover:bg-blue-700">Sign Up</button>
-              {/if}
+              <button on:click={toggleMenu} type="button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white" aria-controls="mobile-menu" aria-expanded="false">
+                <span class="sr-only">Open main menu</span>
+                {#if isMenuOpen}
+                  <X size={24} />
+                {:else}
+                  <Menu size={24} />
+                {/if}
+              </button>
             </div>
           </div>
-          <div class="-mr-2 flex md:hidden">
-            <button on:click={toggleMenu} type="button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white" aria-controls="mobile-menu" aria-expanded="false">
-              <span class="sr-only">Open main menu</span>
-              {#if isMenuOpen}
-                <X size={24} />
-              {:else}
-                <Menu size={24} />
-              {/if}
-            </button>
+        </div>
+      
+        <div class="md:hidden" class:hidden={!isMenuOpen} id="mobile-menu">
+          <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+            <a href="/fileshare" class="text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 block px-3 py-2 rounded-md text-base font-medium">File Share</a>
+            <a href="/urlscanner" class="text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 block px-3 py-2 rounded-md text-base font-medium">URL Scanner</a>
+            {#if isSignedIn}
+              <button on:click={handleSignOut} class="w-full text-left text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 block px-3 py-2 rounded-md text-base font-medium">Sign Out</button>
+            {:else}
+              <button on:click={openLoginModal} class="w-full text-left text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 block px-3 py-2 rounded-md text-base font-medium">Sign In</button>
+              <button on:click={openSignupModal} class="w-full text-left bg-blue-600 text-white hover:bg-blue-700 block px-3 py-2 rounded-md text-base font-medium">Sign Up</button>
+            {/if}
           </div>
         </div>
-      </div>
-  
-      <div class="md:hidden" class:hidden={!isMenuOpen} id="mobile-menu">
-        <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-          <a href="/fileshare" class="text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 block px-3 py-2 rounded-md text-base font-medium">File Share</a>
-          <a href="/urlscanner" class="text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 block px-3 py-2 rounded-md text-base font-medium">URL Scanner</a>
-          {#if isSignedIn}
-            <button on:click={handleSignOut} class="w-full text-left text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 block px-3 py-2 rounded-md text-base font-medium">Sign Out</button>
-          {:else}
-            <button on:click={openLoginModal} class="w-full text-left text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 block px-3 py-2 rounded-md text-base font-medium">Sign In</button>
-            <button on:click={openSignupModal} class="w-full text-left bg-blue-600 text-white hover:bg-blue-700 block px-3 py-2 rounded-md text-base font-medium">Sign Up</button>
-          {/if}
-        </div>
-      </div>
-    </nav>
+      </nav>
   
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <h1 class="text-4xl font-bold mb-8 text-center">Upload or paste your content</h1>
