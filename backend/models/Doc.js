@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const docSchema = new mongoose.Schema({
     customDocId: { type: String, required: true, unique: true },
-    email: { type: String, required: false }, // Changed to not required
+    email: { type: String, required: false },
     content: { type: String, required: true },
     filename: { type: String, required: true },
     contentType: { type: String, required: true },

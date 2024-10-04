@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const cors = require('cors'); // Import cors
+const cors = require('cors'); 
 const authRoutes = require('./routes/auth');
 const uploadRoutes = require('./routes/upload');
 require('dotenv').config();
@@ -9,7 +9,7 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
+
 app.use(cors()); 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -18,7 +18,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/api/auth', authRoutes);
 app.use('/api/upload', uploadRoutes);
 
-// Connect to MongoDB
+
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log('MongoDB connected'))
     .catch(err => {
@@ -31,14 +31,14 @@ app.listen(PORT, () => {
 });
 
 const url = `https://cipherguard.onrender.com/`;
-const interval = 300000; // Interval in milliseconds
+const interval = 300000; 
 
-// Add this new route
+
 app.get('/keep-alive', (req, res) => {
     res.status(200).send('Server is alive');
 });
 
-// Add this at the end of your file
+
 const keepAliveInterval = 14 * 60 * 1000; // 14 minutes
 
 function keepAlive() {

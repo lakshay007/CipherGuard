@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const User = require('../models/User');
-const sendEmail = require('../utils/sendEmail'); // We'll create this utility function
+const sendEmail = require('../utils/sendEmail'); 
 
 const router = express.Router();
 
@@ -64,7 +64,7 @@ router.post('/forgot-password', async (req, res) => {
     try {
         const { email } = req.body;
 
-        // Check if a request has been made in the last minute
+       
         const lastRequestTime = resetPasswordRequests.get(email);
         if (lastRequestTime && Date.now() - lastRequestTime < 60000) {
             return res.status(429).json({ message: 'Please wait before requesting another password reset.' });
@@ -83,8 +83,8 @@ router.post('/forgot-password', async (req, res) => {
 
         await user.save();
 
-        // Create reset URL
-        const resetUrl = `http://localhost:5173/reset-password/${resetToken}`;
+      
+        const resetUrl = `http://pasteit.live/reset-password/${resetToken}`;
 
         // Send email
         await sendEmail({

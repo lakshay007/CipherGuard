@@ -132,9 +132,9 @@
         const data = await response.json();
   
         if (response.ok) {
-          // Store the token in localStorage
+          
           localStorage.setItem('token', data.token);
-          // Redirect to file share page
+         
           goto('/fileshare');
         } else {
           message = data.message || 'Signup failed';

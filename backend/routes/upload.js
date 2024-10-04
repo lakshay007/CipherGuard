@@ -36,21 +36,21 @@ router.post('/', upload.single('file'), async (req, res) => {
     try {
         let doc;
 
-        // Check if the custom ID is unique
+        
         const existingDoc = await Doc.findOne({ customDocId: req.body.customDocId });
         if (existingDoc) {
             return res.status(400).json({ message: 'This document ID is already in use' });
         }
 
-        // Create a base document object
+       
         const docData = {
             customDocId: req.body.customDocId,
-            // Only include email if it's provided
+           
             ...(req.body.email && { email: req.body.email }),
         };
 
         if (req.body.text) {
-            // Handle text upload
+            
             doc = new Doc({
                 ...docData,
                 content: req.body.text,
@@ -58,10 +58,10 @@ router.post('/', upload.single('file'), async (req, res) => {
                 contentType: 'text/plain',
             });
         } else if (req.file) {
-            // Handle file upload
+            
             doc = new Doc({
                 ...docData,
-                content: req.file.buffer.toString('base64'), // Store as base64
+                content: req.file.buffer.toString('base64'),
                 filename: req.file.originalname,
                 contentType: req.file.mimetype,
             });
@@ -86,7 +86,7 @@ router.get('/:customDocId', async (req, res) => {
         }
         
         if (doc.contentType === 'text/plain') {
-            // For text files, send the content as is
+          
             res.json({
                 id: doc.customDocId,
                 email: doc.email,
@@ -96,11 +96,11 @@ router.get('/:customDocId', async (req, res) => {
                 uploadDate: doc.uploadDate
             });
         } else {
-            // For binary files, send the content as base64
+          
             res.json({
                 id: doc.customDocId,
                 email: doc.email,
-                content: doc.content, // This is already base64
+                content: doc.content, 
                 filename: doc.filename,
                 contentType: doc.contentType,
                 uploadDate: doc.uploadDate

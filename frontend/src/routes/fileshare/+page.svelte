@@ -510,7 +510,7 @@
     :global(.dark) {
       color-scheme: dark;
     }
-    /* Commented out color input styles */
+    
     /*
     input[type="color"] {
         -webkit-appearance: none;

@@ -31,7 +31,7 @@
         if (docData) {
             let content = docData.content;
             if (docData.contentType !== 'text/plain') {
-                // For non-text files, convert base64 to Uint8Array
+                
                 const binaryString = atob(docData.content);
                 const bytes = new Uint8Array(binaryString.length);
                 for (let i = 0; i < binaryString.length; i++) {
@@ -61,7 +61,7 @@
 
     function handleSignOut() {
         signOut();
-        goto('/'); // Redirect to home page after signing out
+        goto('/'); 
     }
 </script>
 
