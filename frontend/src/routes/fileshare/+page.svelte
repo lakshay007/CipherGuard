@@ -13,7 +13,7 @@
     let FileInput;
     let isSignedIn = false;
 
-    // New variables for authentication
+    
     let showLoginModal = false;
     let showSignupModal = false;
     let showForgotPasswordModal = false;
@@ -59,7 +59,7 @@
 
     onMount(async () => {
         isSignedIn = await isUserSignedIn();
-        // Remove any existing 'dark' class on initial load
+        
         document.documentElement.classList.remove('dark');
     });
 
@@ -282,7 +282,7 @@
     async function handleSignOut() {
         signOut();
         isSignedIn = false;
-        goto('/'); // Redirect to home page after signing out
+        goto('/'); 
     }
 
     function handleSignIn() {
