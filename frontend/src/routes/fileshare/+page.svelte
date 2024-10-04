@@ -4,7 +4,7 @@
     import { browser } from '$app/environment';
     import { isUserSignedIn, signOut } from '$lib/auth';
     import { goto } from '$app/navigation';
-    import { Moon, Sun, Menu, X, Bold, Type, Palette } from 'lucide-svelte';
+    import { Moon, Sun, Menu, X } from 'lucide-svelte';
     const API_URL = import.meta.env.VITE_API_URL;
 
     let Home;
@@ -364,7 +364,8 @@
           <Input type="email" placeholder="Your email (optional)" bind:value={email} class="w-full" />
           <Input type="text" placeholder="Custom Document link name" bind:value={customDocId} required class="w-full" />
           
-          <!-- Text Formatting Toolbar -->
+          <!-- Text Formatting Toolbar (commented out) -->
+          <!--
           <div class="flex items-center space-x-4 mb-2">
               <Button on:click={applyBold} class="p-2" color={isBold ? "blue" : "light"}>
                   <Bold size={20} />
@@ -378,6 +379,7 @@
                   <input type="color" bind:value={textColor} class="w-8 h-8 rounded-full overflow-hidden" />
               </div>
           </div>
+          -->
 
           <Textarea 
               id="content-textarea"
@@ -386,7 +388,7 @@
               rows="10" 
               class="w-full text-lg resize-none"
               disabled={file !== null}
-              style="font-size: {formattedText.fontSize}; color: {formattedText.color}; font-weight: {formattedText.fontWeight};"
+              // style="font-size: {formattedText.fontSize}; color: {formattedText.color}; font-weight: {formattedText.fontWeight};"
           />
           <div class="flex items-center">
             <div class="flex-grow border-t border-gray-300 dark:border-gray-600"></div>
@@ -509,7 +511,8 @@
     :global(.dark) {
       color-scheme: dark;
     }
-    /* Add this to style the color input */
+    /* Commented out color input styles */
+    /*
     input[type="color"] {
         -webkit-appearance: none;
         border: none;
@@ -523,4 +526,5 @@
         border: none;
         border-radius: 50%;
     }
+    */
   </style>
