@@ -27,7 +27,7 @@
     let message = '';
     let resetEmailButtonDisabled = false;
     let resetEmailCountdown = 0;
-    let isDarkMode = true;
+    let isDarkMode = false; // Changed to false for default light mode
   let isMenuOpen = false;
 
   let textSize = 16;
@@ -59,6 +59,8 @@
 
     onMount(async () => {
         isSignedIn = await isUserSignedIn();
+        // Remove any existing 'dark' class on initial load
+        document.documentElement.classList.remove('dark');
     });
 
     if (browser) {
