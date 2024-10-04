@@ -1,10 +1,10 @@
 <script>
     import { onMount } from 'svelte';
-    import { Navbar, NavBrand, NavLi, NavUl, NavHamburger, Button, Input, Textarea, Card, Modal, Label } from 'flowbite-svelte';
+    import { Navbar, NavBrand, NavLi, NavUl, NavHamburger, Button, Input, Textarea, Card, Modal, Label, Range } from 'flowbite-svelte';
     import { browser } from '$app/environment';
     import { isUserSignedIn, signOut } from '$lib/auth';
     import { goto } from '$app/navigation';
-    import { Moon, Sun, Menu, X } from 'lucide-svelte';
+    import { Moon, Sun, Menu, X, Bold, Type, Palette } from 'lucide-svelte';
     const API_URL = import.meta.env.VITE_API_URL;
 
     let Home;
@@ -29,6 +29,21 @@
     let resetEmailCountdown = 0;
     let isDarkMode = true;
   let isMenuOpen = false;
+
+  let textSize = 16;
+  let textColor = '#000000';
+  let isBold = false;
+  let text = '';
+
+  $: formattedText = {
+      fontSize: `${textSize}px`,
+      color: textColor,
+      fontWeight: isBold ? 'bold' : 'normal'
+  };
+
+  function applyBold() {
+      isBold = !isBold;
+  }
 
   function toggleDarkMode() {
     isDarkMode = !isDarkMode;
@@ -57,13 +72,12 @@
         });
     }
 
-    let text = '';
-    let file = null;
     let email = '';
     let customDocId = '';
     let uploadStatus = '';
     let fileInputRef;
     let uploadedLink = '';
+    let file = null;
 
     function openFileDialog() {
         if (fileInputRef) {
@@ -347,12 +361,30 @@
         <form on:submit|preventDefault={handleUpload} class="p-6 space-y-6">
           <Input type="email" placeholder="Your email (optional)" bind:value={email} class="w-full" />
           <Input type="text" placeholder="Custom Document link name" bind:value={customDocId} required class="w-full" />
+          
+          <!-- Text Formatting Toolbar -->
+          <div class="flex items-center space-x-4 mb-2">
+              <Button on:click={applyBold} class="p-2" color={isBold ? "blue" : "light"}>
+                  <Bold size={20} />
+              </Button>
+              <div class="flex items-center space-x-2">
+                  <Type size={20} />
+                  <Range bind:value={textSize} min={8} max={32} step={1} />
+              </div>
+              <div class="flex items-center space-x-2">
+                  <Palette size={20} />
+                  <input type="color" bind:value={textColor} class="w-8 h-8 rounded-full overflow-hidden" />
+              </div>
+          </div>
+
           <Textarea 
-            placeholder="paste your content here" 
-            bind:value={text} 
-            rows="10" 
-            class="w-full text-lg resize-none"
-            disabled={file !== null}
+              id="content-textarea"
+              placeholder="paste your content here" 
+              bind:value={text} 
+              rows="10" 
+              class="w-full text-lg resize-none"
+              disabled={file !== null}
+              style="font-size: {formattedText.fontSize}; color: {formattedText.color}; font-weight: {formattedText.fontWeight};"
           />
           <div class="flex items-center">
             <div class="flex-grow border-t border-gray-300 dark:border-gray-600"></div>
@@ -474,5 +506,19 @@
     }
     :global(.dark) {
       color-scheme: dark;
+    }
+    /* Add this to style the color input */
+    input[type="color"] {
+        -webkit-appearance: none;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+    }
+    input[type="color"]::-webkit-color-swatch-wrapper {
+        padding: 0;
+    }
+    input[type="color"]::-webkit-color-swatch {
+        border: none;
+        border-radius: 50%;
     }
   </style>
