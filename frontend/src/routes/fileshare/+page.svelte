@@ -1,6 +1,6 @@
 <script>
     import { onMount } from 'svelte';
-    import { Navbar, NavBrand, NavLi, NavUl, NavHamburger, Button, Input, Textarea, Card, Modal, Label, Range } from 'flowbite-svelte';
+    import { Navbar, NavBrand, NavLi, NavUl, NavHamburger, Button, Input, Textarea, Card, Modal, Label, Range, Checkbox } from 'flowbite-svelte';
     import { browser } from '$app/environment';
     import { isUserSignedIn, signOut } from '$lib/auth';
     import { goto } from '$app/navigation';
@@ -80,6 +80,7 @@
     let fileInputRef;
     let uploadedLink = '';
     let file = null;
+    let selfDestruct = false;
 
     function openFileDialog() {
         if (fileInputRef) {
@@ -112,6 +113,7 @@
 
         const formData = new FormData();
         formData.append('customDocId', customDocId);
+        formData.append('selfDestruct', selfDestruct);
 
         if (email) {
             formData.append('email', email);
@@ -364,7 +366,12 @@
           <Input type="email" placeholder="Your email (optional)" bind:value={email} class="w-full" />
           <Input type="text" placeholder="Custom Document link name" bind:value={customDocId} required class="w-full" />
           
-          <!-- Text Formatting Toolbar (commented out) -->
+         
+          <Checkbox bind:checked={selfDestruct}>
+              Self-destruct after 24 hours
+          </Checkbox>
+          
+          <!-- Text Formatting Toolbar-->
           <!--
           <div class="flex items-center space-x-4 mb-2">
               <Button on:click={applyBold} class="p-2" color={isBold ? "blue" : "light"}>

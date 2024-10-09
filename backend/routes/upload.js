@@ -9,7 +9,6 @@ const router = express.Router();
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-
 const DocSchema = new mongoose.Schema({
     customDocId: { type: String, unique: true, required: true },
     email: String,
@@ -17,6 +16,7 @@ const DocSchema = new mongoose.Schema({
     filename: String,
     contentType: String,
     uploadDate: { type: Date, default: Date.now },
+    expirationDate: { type: Date }, //field for self-destruct
 });
 
 const Doc = mongoose.model('Doc', DocSchema);
@@ -36,21 +36,22 @@ router.post('/', upload.single('file'), async (req, res) => {
     try {
         let doc;
 
-        
         const existingDoc = await Doc.findOne({ customDocId: req.body.customDocId });
         if (existingDoc) {
             return res.status(400).json({ message: 'This document ID is already in use' });
         }
 
-       
         const docData = {
             customDocId: req.body.customDocId,
-           
             ...(req.body.email && { email: req.body.email }),
         };
 
+        
+        if (req.body.selfDestruct === 'true') {
+            docData.expirationDate = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours from now
+        }
+
         if (req.body.text) {
-            
             doc = new Doc({
                 ...docData,
                 content: req.body.text,
@@ -58,7 +59,6 @@ router.post('/', upload.single('file'), async (req, res) => {
                 contentType: 'text/plain',
             });
         } else if (req.file) {
-            
             doc = new Doc({
                 ...docData,
                 content: req.file.buffer.toString('base64'),
@@ -76,7 +76,6 @@ router.post('/', upload.single('file'), async (req, res) => {
         res.status(500).json({ message: 'Error uploading document' });
     }
 });
-
 
 router.get('/:customDocId', async (req, res) => {
     try {
