@@ -8,7 +8,7 @@ require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-
+ 
 
 app.use(cors()); 
 app.use(bodyParser.json());
@@ -17,6 +17,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/upload', uploadRoutes);
+
 
 
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })

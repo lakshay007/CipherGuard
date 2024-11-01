@@ -27,8 +27,24 @@ export async function isUserSignedIn() {
     }
 }
 
+export async function handleAuthResponse(response) {
+    const data = await response.json();
+    if (response.ok) {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('userEmail', data.email);
+        return true;
+    }
+    return false;
+}
+
+export function getUserEmail() {
+    return localStorage.getItem('userEmail');
+}
+
 export function signOut() {
     localStorage.removeItem('token');
+    localStorage.removeItem('userEmail');
+    localStorage.removeItem('privateKey');
 }
 
 export function getToken() {

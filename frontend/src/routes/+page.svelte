@@ -26,7 +26,6 @@
   
     onMount(() => {
       showContent = true;
-      window.location.href = '/fileshare';
     });
   
     function openLoginModal() {
@@ -38,11 +37,11 @@
     }
   
     function openSignupModal() {
-      showSignupModal = true; // Open signup modal
+      showSignupModal = true; 
     }
   
     function closeSignupModal() {
-      showSignupModal = false; // Close signup modal
+      showSignupModal = false; 
     }
   
     function openForgotPasswordModal() {
@@ -106,10 +105,12 @@
         const data = await response.json();
   
         if (response.ok) {
-          // Store the token in localStorage
+         
           localStorage.setItem('token', data.token);
-          // Redirect to file share page
-          goto('/fileshare');
+          localStorage.setItem('userEmail', data.email);
+          localStorage.setItem('privateKey', data.privateKey);
+         
+          goto('/urlscanner');
         } else {
           message = data.message || 'Login failed';
         }
@@ -135,7 +136,7 @@
           
           localStorage.setItem('token', data.token);
          
-          goto('/fileshare');
+          goto('/urlscanner');
         } else {
           message = data.message || 'Signup failed';
         }
@@ -146,7 +147,7 @@
     }
   
     function goToFileShare() {
-        goto('/fileshare');
+        goto('/urlscanner');
     }
   
     function toggleMenu() {
@@ -321,7 +322,7 @@
       font-family: 'Inter', sans-serif;
     }
 
-    /* Add these styles for the buttons */
+   
     :global(.flowbite-button) {
       background-color: #10B981;
       color: white;
@@ -337,7 +338,7 @@
       cursor: not-allowed;
     }
 
-    /* Add these styles for better mobile responsiveness */
+    
     :global(.navbar-menu) {
       @apply md:flex md:w-auto md:order-1;
     }

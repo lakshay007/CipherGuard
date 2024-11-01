@@ -6,7 +6,7 @@ const User = require('../models/User');
 const sendEmail = require('../utils/sendEmail'); 
 
 const router = express.Router();
-//comment to check the git diff
+
 
 const resetPasswordRequests = new Map();
 
@@ -17,19 +17,56 @@ router.get('/test', (req, res) => {
 
 // Signup route
 router.post('/signup', async (req, res) => {
-    const { name, username, email, password } = req.body;
-
     try {
-        let user = await User.findOne({ $or: [{ username }, { email }] });
+        const { name, username, email, password, publicKey, privateKey } = req.body;
+        
+        // Check if user exists
+        let user = await User.findOne({ $or: [{ email }, { username }] });
         if (user) {
-            return res.status(400).json({ message: 'Username or email already exists' });
+            return res.status(400).json({ message: 'User already exists' });
         }
 
-        user = new User({ name, username, email, password });
+        // Create new user with both keys
+        user = new User({
+            name,
+            username,
+            email,
+            password,
+            publicKey,
+            privateKey
+        });
+
         await user.save();
 
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        res.status(201).json({ token });
+        // Generate JWT token
+        const token = jwt.sign(
+            { 
+                id: user._id,
+                email: user.email 
+            },
+            process.env.JWT_SECRET,
+            { expiresIn: '24h' }
+        );
+
+        res.status(201).json({ 
+            token,
+            email: user.email,
+            privateKey: user.privateKey // Send private key during signup
+        });
+    } catch (error) {
+        console.error('Signup error:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// Add a new route to fetch public key by email
+router.get('/public-key/:email', async (req, res) => {
+    try {
+        const user = await User.findOne({ email: req.params.email });
+        if (!user || !user.publicKey) {
+            return res.status(404).json({ message: 'Public key not found' });
+        }
+        res.json({ publicKey: user.publicKey });
     } catch (error) {
         res.status(500).json({ message: 'Server error' });
     }
@@ -51,11 +88,24 @@ router.post('/login', async (req, res) => {
             return res.status(401).json({ message: 'Invalid username or password' });
         }
 
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        res.json({ token, username: user.username }); // Include username in response
+        const token = jwt.sign(
+            { 
+                id: user._id,
+                email: user.email
+            }, 
+            process.env.JWT_SECRET, 
+            { expiresIn: '1h' }
+        );
+        
+        res.json({ 
+            token, 
+            username: user.username, 
+            email: user.email,
+            privateKey: user.privateKey
+        });
     } catch (error) {
         console.error('Login error:', error);
-        res.status(500).json({ message: 'Server error', error: error.message });
+        res.status(500).json({ message: 'Server error' });
     }
 });
 
@@ -76,7 +126,7 @@ router.post('/forgot-password', async (req, res) => {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        // Generate reset token
+       
         const resetToken = crypto.randomBytes(20).toString('hex');
         user.resetPasswordToken = resetToken;
         user.resetPasswordExpires = Date.now() + 3600000; // Token expires in 1 hour

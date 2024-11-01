@@ -5,6 +5,7 @@
     import { isUserSignedIn, signOut } from '$lib/auth';
     import { goto } from '$app/navigation';
     import { Moon, Sun, Menu, X } from 'lucide-svelte';
+    import { generateKeyPair, encryptText } from '$lib/crypto';
     const API_URL = import.meta.env.VITE_API_URL;
 
     let Home;
@@ -82,6 +83,99 @@
     let file = null;
     let selfDestruct = false;
 
+    let isEncrypted = false;
+    let recipientEmail = '';
+    let content = '';
+    let customId = '';
+
+    async function handleUpload() {
+        if (!customDocId) {
+            uploadStatus = 'Please provide a custom document ID.';
+            return;
+        }
+
+        try {
+            // First, check if the custom ID is unique
+            const checkResponse = await fetch(`${API_URL}/api/upload/check-id/${customDocId}`);
+            const checkResult = await checkResponse.json();
+
+            if (!checkResult.isUnique) {
+                uploadStatus = 'This document ID is already in use. Please choose a different one.';
+                return;
+            }
+
+            let finalContent = text;
+            
+            // Handle encryption if enabled
+            if (isEncrypted && recipientEmail) {
+                try {
+                    // Fetch recipient's public key
+                    const response = await fetch(`${API_URL}/api/auth/public-key/${recipientEmail}`);
+                    const { publicKey } = await response.json();
+                    
+                    if (!publicKey) {
+                        uploadStatus = 'Recipient not found or has no public key';
+                        return;
+                    }
+                    
+                    // Encrypt the content
+                    finalContent = await encryptText(text, publicKey);
+                } catch (error) {
+                    console.error('Encryption error:', error);
+                    uploadStatus = 'Error during encryption. Please try again.';
+                    return;
+                }
+            }
+
+            const formData = new FormData();
+            formData.append('customDocId', customDocId);
+            formData.append('selfDestruct', selfDestruct);
+            formData.append('isEncrypted', isEncrypted);
+            if (recipientEmail && isEncrypted) {
+                formData.append('intendedRecipient', recipientEmail);
+            }
+            if (email) {
+                formData.append('email', email);
+            }
+
+            if (finalContent) {
+                formData.append('text', finalContent);
+            } else if (file) {
+                formData.append('file', file);
+            } else {
+                uploadStatus = 'Please provide either text or a file to upload.';
+                return;
+            }
+
+            // Upload the content
+            const response = await fetch(`${API_URL}/api/upload`, {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                uploadStatus = `Upload successful! Document ID: ${result.id}`;
+                uploadedLink = `https://pasteit.live/${result.id}`; 
+                text = '';
+                file = null;
+                customDocId = '';
+                email = '';
+                recipientEmail = '';
+                isEncrypted = false;
+                if (fileInputRef) {
+                    fileInputRef.value = '';
+                }
+            } else {
+                uploadStatus = 'Upload failed. Please try again.';
+                uploadedLink = '';
+            }
+        } catch (error) {
+            console.error('Error uploading:', error);
+            uploadStatus = 'An error occurred during upload.';
+        }
+    }
+
     function openFileDialog() {
         if (fileInputRef) {
             fileInputRef.click();
@@ -102,66 +196,6 @@
         file = null;
         if (fileInputRef) {
             fileInputRef.value = '';
-        }
-    }
-
-    async function handleUpload() {
-        if (!customDocId) {
-            uploadStatus = 'Please provide a custom document ID.';
-            return;
-        }
-
-        const formData = new FormData();
-        formData.append('customDocId', customDocId);
-        formData.append('selfDestruct', selfDestruct);
-
-        if (email) {
-            formData.append('email', email);
-        }
-
-        if (text) {
-            formData.append('text', text);
-        } else if (file) {
-            formData.append('file', file);
-        } else {
-            uploadStatus = 'Please provide either text or a file to upload.';
-            return;
-        }
-
-        try {
-            // First, check if the custom ID is unique
-            const checkResponse = await fetch(`${API_URL}/api/upload/check-id/${customDocId}`);
-            const checkResult = await checkResponse.json();
-
-            if (!checkResult.isUnique) {
-                uploadStatus = 'This document ID is already in use. Please choose a different one.';
-                return;
-            }
-
-            // If the ID is unique, proceed with the upload
-            const response = await fetch(`${API_URL}/api/upload`, {
-                method: 'POST',
-                body: formData,
-            });
-
-            if (response.ok) {
-                const result = await response.json();
-                uploadStatus = `Upload successful! Document ID: ${result.id}`;
-                uploadedLink = `https://pasteit.live/${result.id}`; 
-                text = '';
-                file = null;
-                customDocId = '';
-                email = ''; // Clear email field after successful upload
-                if (fileInputRef) {
-                    fileInputRef.value = '';
-                }
-            } else {
-                uploadStatus = 'Upload failed. Please try again.';
-                uploadedLink = '';
-            }
-        } catch (error) {
-            console.error('Error uploading:', error);
-            uploadStatus = 'An error occurred during upload.';
         }
     }
 
@@ -240,9 +274,14 @@
             });
 
             const data = await response.json();
+            console.log('Login response:', data); // Debug log
 
             if (response.ok) {
+                // Store all necessary data in localStorage
                 localStorage.setItem('token', data.token);
+                localStorage.setItem('userEmail', data.email);
+                localStorage.setItem('privateKey', data.privateKey);
+                localStorage.setItem('username', data.username); // If you need username
                 isSignedIn = true;
                 showLoginModal = false;
                 message = 'Login successful!';
@@ -257,18 +296,30 @@
 
     async function handleSignup() {
         try {
+            // Generate key pair first
+            const keys = await generateKeyPair();
+
             const response = await fetch(`${API_URL}/api/auth/signup`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ name: signupName, username: signupUsername, email: signupEmail, password: signupPassword }),
+                body: JSON.stringify({ 
+                    name: signupName, 
+                    username: signupUsername, 
+                    email: signupEmail, 
+                    password: signupPassword,
+                    publicKey: keys.publicKey,
+                    privateKey: keys.privateKey
+                }),
             });
 
             const data = await response.json();
 
             if (response.ok) {
                 localStorage.setItem('token', data.token);
+                localStorage.setItem('userEmail', data.email);
+                localStorage.setItem('privateKey', data.privateKey);
                 isSignedIn = true;
                 showSignupModal = false;
                 message = 'Signup successful!';
@@ -363,6 +414,25 @@
   
       <div class="bg-white dark:bg-gray-800 shadow-xl rounded-lg overflow-hidden">
         <form on:submit|preventDefault={handleUpload} class="p-6 space-y-6">
+          <div class="flex items-center">
+            <Checkbox bind:checked={isEncrypted} id="encrypt">
+                Enable Encryption
+            </Checkbox>
+          </div>
+
+          {#if isEncrypted}
+              <div>
+                  <Label for="recipient" class="mb-2">Recipient Email</Label>
+                  <Input
+                      type="email"
+                      id="recipient"
+                      bind:value={recipientEmail}
+                      placeholder="Enter recipient's email"
+                      required
+                  />
+              </div>
+          {/if}
+
           <Input type="email" placeholder="Your email (optional)" bind:value={email} class="w-full" />
           <Input type="text" placeholder="Custom Document link name" bind:value={customDocId} required class="w-full" />
           
@@ -371,7 +441,7 @@
               Self-destruct after 24 hours
           </Checkbox>
           
-          <!-- Text Formatting Toolbar-->
+          
           <!--
           <div class="flex items-center space-x-4 mb-2">
               <Button on:click={applyBold} class="p-2" color={isBold ? "blue" : "light"}>
