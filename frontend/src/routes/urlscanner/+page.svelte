@@ -32,7 +32,7 @@
 
         isLoading = true;
         try {
-            const response = await fetch('https://cguardurlapi.onrender.com/predict', {
+            const response = await fetch('https://cguardurlapi.onrender.com/predict',  {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
